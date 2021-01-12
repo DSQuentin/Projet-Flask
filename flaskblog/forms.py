@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.fields.html5 import EmailField
@@ -17,12 +18,12 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField("S'incrire")
 
     def validate_username(self, username): #On vérifie que l'utilisateur entré dans le form n'existe pas déja
-        user = User.query.filter_by(username=username.data).first
+        user = User.query.filter_by(username=username.data).first()
         if user: #Si il existe, on renvoie un message d'erreur
             raise ValidationError('Cet username existe déja, veuillez en choisir un autre.')
     
     def validate_email(self, email): #Meme chose pour l'email
-        user = User.query.filter_by(email=email.data).first
+        user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('Cet email existe déja, veuillez en choisir une autre.')
 
@@ -34,3 +35,22 @@ class LoginForm(FlaskForm):
                             validators=[DataRequired(message='Ce champs est requis')])
     remember = BooleanField('Se souvenir de moi')
     submit = SubmitField("Se connecter")
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username', 
+                            validators=[DataRequired(message='Ce champs est requis'), Length(min=2, max=20, message='Votre username doit faitre entre 2 et 20 caractères.')])
+    email = EmailField('Email',
+                            validators=[DataRequired(message='Ce champs est requis'), Email()])
+    submit = SubmitField("Mettre à jour")
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('Cet username existe déja, veuillez en choisir un autre.')
+    
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('Cet email existe déja, veuillez en choisir une autre.')
