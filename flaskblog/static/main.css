@@ -50,11 +50,17 @@ body {
   }
   
   .article-img {
-    height: 65px;
-    width: 65px;
+    height: 125px;
+    width: 125px;
     margin-right: 16px;
   }
-  
+
+  .album-img {
+    height: 300px;
+    width: 300px;
+    margin: 20px;
+  }
+
   .article-metadata {
     padding-bottom: 1px;
     margin-bottom: 4px;

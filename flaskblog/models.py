@@ -48,7 +48,7 @@ class Album(db.Model):
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now())
     release_year = db.Column(db.Integer, nullable=False)
-    img = db.Column(db.String(100), nullable=False, default='default.jpg')
+    img = db.Column(db.String(100), nullable=False, default='default_cover.jpg')
     author_id = db.Column(db.Integer, db.ForeignKey('authors.id'), nullable=False) #Un album possède un unique author
 
     def __repr__(self):

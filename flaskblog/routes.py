@@ -1,29 +1,15 @@
 from flask import render_template, url_for, flash, redirect, request
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, AlbumForm, AuthorForm
 from flaskblog.models import User, Album, Author
 from flask_login import login_user, current_user, logout_user, login_required
 
 
-posts = [
-    {
-        'author' : 'Corvey Schafer',
-        'title': 'Blog Post 1',
-        'content': 'First post content',
-        'date_posted' : 'April 20, 2018'
-    },
-    {
-        'author' : 'Jane Doe',
-        'title': 'Blog Post 2',
-        'content': 'Second post content',
-        'date_posted' : 'April 21, 2018'
-    }
-]
-
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', posts = posts)
+    albums = Album.query.all()
+    return render_template('home.html', albums=albums)
 
 @app.route("/about")
 def about():
@@ -78,3 +64,67 @@ def account():
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Compte', image_file=image_file, form=form)
+
+@app.route("/album/new", methods=['GET', 'POST'])
+@login_required
+def new_album():
+    form = AlbumForm()
+    if form.validate_on_submit():
+        author = Author.query.filter_by(name=form.author_id.data).first()
+        if author:
+            album = Album(title=form.title.data, release_year=form.release_year.data, author_id=author.id)
+            db.session.add(album)
+            db.session.commit()
+            flash('Votre album à bien été ajouté !', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Aucun auteur ne correspond à celui que vous avez entré.', 'danger')
+    return render_template('create_album.html', title='Ajouter un album', form=form, legend="Ajouter un album")
+    
+@app.route("/album/<int:album_id>")
+def album(album_id):
+    album = Album.query.get_or_404(album_id)
+    return render_template('album.html', title=album.title, album=album)
+
+@app.route("/album/<int:album_id>/update", methods=['POST', 'GET'])
+@login_required
+def update_album(album_id):
+    album = Album.query.get_or_404(album_id)
+    form = AlbumForm()
+    if form.validate_on_submit():
+        album.title = form.title.data
+        album.release_year = form.release_year.data
+        album.author.name = form.author_id.data
+        db.session.commit()
+        flash('Votre album a bien été mis à jour !', 'success')
+        return redirect(url_for('album', album_id=album.id))
+    elif request.method == 'GET':
+        form.title.data = album.title
+        form.release_year.data = album.release_year
+        form.author_id.data = album.author.name
+    return render_template('create_album.html', title='Modifier un album', form=form, legend="Modifié un album")
+
+@app.route("/album/<int:album_id>/delete", methods=['POST'])
+@login_required
+def delete_album(album_id):
+    album = Album.query.get_or_404(album_id)
+    db.session.delete(album)
+    db.session.commit()
+    flash('Votre album a bien été supprimé !', 'success')
+    return redirect(url_for('home'))
+
+
+
+
+
+@app.route("/author/new", methods=['GET', 'POST'])
+@login_required
+def new_author():
+    form = AuthorForm()
+    if form.validate_on_submit():
+        author = Author(name=form.name.data)
+        db.session.add(author)
+        db.session.commit()
+        flash('Votre auteur à bien été ajouté !', 'success')
+        return redirect(url_for('home'))
+    return render_template('create_author.html', title='Ajouter un auteur', form=form)

@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+    <article class="media content-section d-flex mx-5">
+      <img src="{{ url_for('static', filename='album_pics/' + album.img) }}" alt="" class="rounded-circle album-img">
+        <div class="media-body">
+          <div class="article-metadata">
+            <a class="mr-2 text-decoration-none" href="#">{{ album.author.name }}</a>
+            <small class="text-muted">{{ album.date_posted.strftime('le %d/%m/%Y à %Hh%M') }}</small>
+            <div>
+                <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_album', album_id=album.id)}}">Mettre à jour</a>
+                <button tyoe="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Supprimer</button>
+            </div>
+          </div>
+          <h1 class="article-title">{{ album.title }}</h2>
+          <p class="article-content">Sortie en {{ album.release_year }}</p>
+        </div>
+      </article>
+
+      <!-- Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Etes-vous sûr de vouloir supprimer cet album ?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-footer">
+                        <form action="{{ url_for('delete_album', album_id=album.id) }}" method="POST">
+                            <input class="btn btn-danger" type="submit" value="Supprimer">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock content %}

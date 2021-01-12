@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.fields.html5 import EmailField
 from flaskblog.models import User
@@ -54,3 +54,13 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('Cet email existe déja, veuillez en choisir une autre.')
+
+class AlbumForm(FlaskForm):
+    title = StringField('Titre', validators=[DataRequired(message='Ce champs est requis')])
+    release_year = IntegerField('Année de sortie', validators=[DataRequired(message='Ce champs doit être remplis')])
+    author_id = StringField('Nom de l\'auteur', validators=[DataRequired()])
+    submit = SubmitField('Ajouter')
+
+class AuthorForm(FlaskForm):
+    name = StringField('Nom de l\'auteur', validators=[DataRequired(message='Ce champs est requis')])
+    submit = SubmitField('Ajouter')
