@@ -10,4 +10,6 @@ class TestFoo(unittest.TestCase, FixturesMixin):
 
     app = app
     db = db
-    
+
+    def test_authors(self):
+        authors = Author.query.all()
