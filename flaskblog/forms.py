@@ -61,6 +61,15 @@ class AlbumForm(FlaskForm):
     author_id = StringField('Nom de l\'auteur', validators=[DataRequired()])
     submit = SubmitField('Ajouter')
 
+class GenreForm(FlaskForm):
+    name = StringField('Nom du genre', validators=[DataRequired(message='Ce champs est requis')])
+    submit = SubmitField('Ajouter')
+
+
 class AuthorForm(FlaskForm):
     name = StringField('Nom de l\'auteur', validators=[DataRequired(message='Ce champs est requis')])
     submit = SubmitField('Ajouter')
+
+class AlbumSearchForm(FlaskForm):
+    search = StringField('')
+    submit = SubmitField('Rechercher')

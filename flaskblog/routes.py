@@ -1,15 +1,16 @@
 from flask import render_template, url_for, flash, redirect, request
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, AlbumForm, AuthorForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, AlbumForm, AuthorForm, GenreForm, AlbumSearchForm
 from flaskblog.models import User, Album, Author
 from flask_login import login_user, current_user, logout_user, login_required
 
 
 @app.route("/")
-@app.route("/home")
+@app.route("/home", methods=['GET', 'POST'])
 def home():
-    albums = Album.query.all()
-    return render_template('home.html', albums=albums)
+    page = request.args.get('page', 1, type=int)
+    albums = Album.query.order_by(Album.date_posted.desc()).paginate(page=page, per_page=6)
+    return render_template('home.html', albums=albums, form=AlbumSearchForm)
 
 @app.route("/about")
 def about():
@@ -114,6 +115,17 @@ def delete_album(album_id):
     return redirect(url_for('home'))
 
 
+@app.route("/genre/new", methods=['GET', 'POST'])
+@login_required
+def new_genre():
+    form = GenreForm()
+    if form.validate_on_submit():
+        genre = Genre(name=form.name.data)
+        db.session.add(genre)
+        db.session.commit()
+        flash('Votre genre à bien été ajouté !', 'success')
+        return redirect(url_for('home'))
+    return render_template('create_genre.html', title='Ajouter un auteur', form=form)
 
 
 

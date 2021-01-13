@@ -2,7 +2,7 @@
 {% block content %}
     <h1>Home page</h1>
     <div class="row">
-    {% for album in albums %}
+    {% for album in albums.items %}
       <div class="col-sm-4 my-2">
         <div class="card">
           <div class="card-body d-flex">
@@ -10,7 +10,7 @@
             <div>
               <div class="article-metadata">
                 <a href="#" class="article-title text-decoration-none">{{ album.author.name }}</a>
-                <small class="text-muted">{{ album.date_posted.strftime('le %d/%m/%Y à %Hh%M') }}</small>
+                <small class="text-muted">{{ album.date_posted.strftime('Ajouté le %d/%m/%Y') }}</small>
               </div>
               <h2><a class="article-title text-decoration-none" href="{{ url_for('album', album_id=album.id)}}">{{ album.title }}</a></h5>
             </div>
@@ -19,4 +19,19 @@
       </div>
     {% endfor %}
   </div>
+  <!-- Pagination -->
+  <div class="d-flex justify-content-center">
+    {% for page_num in albums.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if page_num %}
+        {% if albums.page == page_num %}
+          <a class="btn btn-info my-4 mx-1" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+          <a class="btn btn-outline-info my-4 mx-1" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        ...
+      {% endif %}
+    {% endfor %}
+  </div>
+
 {% endblock content %}

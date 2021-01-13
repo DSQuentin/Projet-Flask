@@ -30,6 +30,11 @@ class Author(db.Model):
     def __repr__(self):
         return f"Author('{self.name}')"
 
+
+#albums_genres = db.Table('albums_genres',
+#    db.Column('album_id', db.Integer, db.ForeignKey('album.id')),
+#    db.Column('genre_id', db.Integer, db.ForeignKey('genre.id')))
+
 class Genre(db.Model):
 
     __tablename__ = 'genres'
@@ -50,6 +55,8 @@ class Album(db.Model):
     release_year = db.Column(db.Integer, nullable=False)
     img = db.Column(db.String(100), nullable=False, default='default_cover.jpg')
     author_id = db.Column(db.Integer, db.ForeignKey('authors.id'), nullable=False) #Un album possède un unique author
+    #genres = db.relationship('Genre', secondary=albums_genres, backref=db.backref('albums', lazy=True))
 
     def __repr__(self):
         return f"Album('{self.title}', '{self.date_posted}, '{self.release_year}','{self.img})"
+
