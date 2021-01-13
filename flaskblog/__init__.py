@@ -16,4 +16,4 @@ login_manager.login_message_category = 'info'
 login_manager.login_message = 'Veuillez vous connecter pour accéder à cette page.'
 
 
-from flaskblog import routes
+from flaskblog import routes, commands
