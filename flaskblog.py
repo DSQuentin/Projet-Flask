@@ -38,7 +38,7 @@ def about():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Compte de {form.username.data} créer !', 'success')
+        flash(f'Compte de {form.username.data} creer !', 'success')
         return redirect(url_for('home'))
     return render_template('register.html', title='Inscription', form=form)
 
@@ -47,10 +47,10 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-            flash('Connexion réussi !', 'success')
+            flash('Connexion reussi !', 'success')
             return redirect(url_for('home'))
         else:
-            flash('Connexion échouée, veuillez vérifier votre email et mot de passe', 'danger')
+            flash('Connexion echouee, veuillez verifier votre email et mot de passe', 'danger')
     return render_template('login.html', title='Connexion', form=form)
 
 
